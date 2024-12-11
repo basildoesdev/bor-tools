@@ -22,6 +22,30 @@ const client = new Client({
     .then(() => console.log("Connected to PostgreSQL"))
     .catch((err) => console.error("Connection error", err.stack));
 
+    async function ensureTableExists() {
+        try {
+          await client.connect();
+      
+          const query = `
+            CREATE TABLE IF NOT EXISTS request_logs (
+                id SERIAL PRIMARY KEY,
+                request_type TEXT NOT NULL,
+                additional_params JSONB NOT NULL,
+                timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+          `;
+      
+          await client.query(query);
+          console.log("Ensured table 'request_logs' exists.");
+        } catch (err) {
+          console.error("Error ensuring table exists:", err);
+        } finally {
+          await client.end();
+        }
+      }
+      
+      ensureTableExists();
+
 setInterval(() => {
     console.log("Heartbeat: Server is active.");
   }, 150000); 
