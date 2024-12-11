@@ -12,7 +12,10 @@ app.options("*", cors());
 app.use(express.static('public'));
 
 const client = new Client({
-    connectionString: process.env.DATABASE_URL, 
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+      rejectUnauthorized: false, 
+    },
   });
   
   client.connect()
