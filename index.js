@@ -24,6 +24,7 @@ const client = new Client({
 
     async function ensureTableExists() {
         try {
+        client.connect()
           const query = `
             CREATE TABLE IF NOT EXISTS request_logs (
                 id SERIAL PRIMARY KEY,
