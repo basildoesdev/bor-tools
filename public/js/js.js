@@ -57,13 +57,84 @@ async function updateManagerInfo(member, main){
     const welcomeDisplay = document.getElementById('welcome')
 
     welcomeDisplay.innerHTML = `Welcome, ${capitalize(managerData.members[member].username)}! <hr />`;
-    globals._teamid = managerData.members[member]._teamid
-    localStorage('teamId', managerData.members[member]._teamid)
+    globals._teamid = managerData.members[member].teamid
+    localStorage.setItem('teamId', managerData.members[member]._teamid)
     managerData.members[member].premium == 1 ? welcomeDisplay.innerHTML += "*" : " ";
 
     generateOptions(member, main, globals._teamid)
 }
 
-function generateOptions(member, main, teamid){
+const displayArea = document.getElementById('display-area');
 
+function generateOptions(member, main, param_teamid){
+    // console.log(`member key ${member}`)
+    // console.log(`main key ${main}`)
+    // console.log(`team key ${param_teamid}`)
+    // Select the parent element where the button will be appended
+    const parentElement = document.getElementById('options'); // Change to your desired container ID
+
+    // Create a new button element
+    const viewTeamButton = document.createElement('button');
+    const viewClubButton = document.createElement('button');
+
+    // Set attributes and text content for the button
+    viewTeamButton.textContent = 'Squad'; // Set the button's label
+    viewTeamButton.id = 'team-button';   // Optional: Set an ID for the button
+    viewTeamButton.className = 'btn';       // Optional: Add a class for styling
+
+    viewClubButton.textContent = "Team";
+    viewClubButton.id = 'club-button'
+    viewClubButton.className = 'btn'
+
+    // Add an event listener to the button
+    viewTeamButton.addEventListener('click', async () => {
+        displayArea.innerHTML = `Fetching...`
+        let team = await fetchRugbyData('p',{teamid:param_teamid, m:member, mk:main,},0)
+        // alert('Button was clicked!');
+        let SortedTeam = Object.values(team.players)
+        console.log(SortedTeam);
+        
+        displayTeam(SortedTeam);
+        
+    });
+
+    viewClubButton.addEventListener('click', async () => {
+        displayArea.innerHTML = `Fetching...`
+        let club = await fetchRugbyData('t',{teamid:param_teamid,m:member,mk:main,},0)
+        displayClub(club)
+    })
+
+    // Append the button to the parent element
+    parentElement.appendChild(viewTeamButton);
+    parentElement.appendChild(viewClubButton);
+
+
+}
+
+function displayTeam(team){
+    const parent = displayArea;
+    displayArea.innerHTML = ``
+    team.forEach(player => {
+        let header = document.createElement('div')
+        header.className = 'player-header'
+        header.textContent = `${player.name}`
+        parent.appendChild(header)
+        let untrainables = document.createElement('div')
+        untrainables.textContent = `${Number(player.csr).toLocaleString()} CSR 
+        | ${player.age} yo (${player.birthday})
+        | ${Number(((player.salary/16).toFixed(0))).toLocaleString()}p.w 
+        | ${player.height}cm 
+        | ${player.weight}kg
+        | ${player.nationality}
+        `
+        parent.appendChild(untrainables)
+    });
+}
+
+function displayClub(club){
+    const parent = displayArea;
+    displayArea.innerHTML = ``;
+    let header = document.createElement('div')
+    header.textContent = club.teams[globals._teamid].name
+    parent.appendChild(header)
 }
