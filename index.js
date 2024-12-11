@@ -69,6 +69,12 @@ app.post('/proxy', async (req, res) => {
     };
 
     try {
+        await client.query(
+            'INSERT INTO request_logs (request_type, additional_params, timestamp) VALUES ($1, $2, $3)',
+            [requestType, additionalParams, timestamp]
+        );
+
+
         const response = await fetch(API_URL, {
             method: 'POST',
             headers: {
