@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import fetch from 'node-fetch';
+import pg from 'pg';
+const { Client } = pg;
 
 const app = express();
 
@@ -8,6 +10,14 @@ app.use(cors());
 app.use(express.json());
 app.options("*", cors());
 app.use(express.static('public'));
+
+const client = new Client({
+    connectionString: process.env.DATABASE_URL, 
+  });
+  
+  client.connect()
+    .then(() => console.log("Connected to PostgreSQL"))
+    .catch((err) => console.error("Connection error", err.stack));
 
 setInterval(() => {
     console.log("Heartbeat: Server is active.");
