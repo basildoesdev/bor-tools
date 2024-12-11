@@ -1,3 +1,23 @@
 body{
     color:#888787;
+    
+}
+
+.hide{
+    display: none;
+}
+
+.game-date{
+    color:#ccc;
+    font-size: 0.8rem;
+    text-align: center;
+    background-color: #888787;
+    width:200px;
+    height:auto;
+    padding:2px;
+    position:fixed;
+    top:0;
+    right:0;
+    border-left: 2px solid #acacac;
+    border-radius: 0 0 0 5px;
 }
